@@ -104,5 +104,9 @@ function handleClickListener(e){
     }
 }
 
-addTaskInput.addEventListener('keyup',handleInputKeypress);
-document.addEventListener('click',handleClickListener);
+function initializeApp(){
+    addTaskInput.addEventListener('keyup',handleInputKeypress);
+    document.addEventListener('click',handleClickListener);
+}
+
+initializeApp();
