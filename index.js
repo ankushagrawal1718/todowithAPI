@@ -1,11 +1,27 @@
 let tasks = [];
-const tastList = document.getElementById('list');
+const tasksList = document.getElementById('list');
 const addTaskInput = document.getElementById('add');
 const taskCounter = document.getElementById('tasks-counter');
 console.log('working');
 
-function renderList(){
+function addTaskToDom(task){
+    const li = document.createElement('li');
 
+    li.innerHTML = `
+    <input type="checkbox" id="${task.id}" ${task.done? 'checked' : ''} class="custom-checkbox">
+    <label for="${task.id}">${task.text}</label>
+    <img src="./assets/delete-256.png" class="delete" data-id="${task.id}" />
+    `;
+    tasksList.append(li);
+}
+
+
+function renderList(){
+    tasksList.innerHTML ='';
+    for(let i=0;i<tasks.length;i++){
+        addTaskToDom(tasks[i]);
+    }
+    taskCounter.innerHTML = tasks.length;
 }
 
 function toggleTask(taskId){
@@ -73,4 +89,20 @@ function handleInputKeypress(e){
     }
 }
 
+function handleClickListener(e){
+    const target = e.target;
+    console.log(target);
+
+    if(target.className === 'delete'){
+        const taskId = target.dataset.id;
+        deleteTask(taskId);
+        return;
+    }else if(target.className === 'custom-checkbox'){
+        const taskId = target.id;
+        toggleTask(taskId);
+        return; 
+    }
+}
+
 addTaskInput.addEventListener('keyup',handleInputKeypress);
+document.addEventListener('click',handleClickListener);
