@@ -2,14 +2,27 @@ let tasks = [];
 const tasksList = document.getElementById('list');
 const addTaskInput = document.getElementById('add');
 const taskCounter = document.getElementById('tasks-counter');
-console.log('working');
+
+function fatchTodos(){
+    fetch('https://jsonplaceholder.typicode.com/todos')
+    .then(function(response){
+        // console.log(response);
+        return response.json();
+    }).then(function(data){
+        // console.log(data);
+        tasks = data.slice(0,10);
+        renderList(); 
+    }).catch(function(error){
+        console.log('error',error)
+    })
+}
 
 function addTaskToDom(task){
     const li = document.createElement('li');
 
     li.innerHTML = `
-    <input type="checkbox" id="${task.id}" ${task.done? 'checked' : ''} class="custom-checkbox">
-    <label for="${task.id}">${task.text}</label>
+    <input type="checkbox" id="${task.id}" ${task.completed? 'checked' : ''} class="custom-checkbox">
+    <label for="${task.id}">${task.title}</label>
     <img src="./assets/delete-256.png" class="delete" data-id="${task.id}" />
     `;
     tasksList.append(li);
@@ -26,12 +39,12 @@ function renderList(){
 
 function toggleTask(taskId){
     const task = tasks.filter(function(task){
-        return task.id === taskId
+        return task.id === Number(taskId)
     });
 
     if(task.length >0){
         const currentTask = task[0];
-        currentTask.done =  !currentTask.done;
+        currentTask.completed =  !currentTask.completed;
         renderList();
         showNotification('task toggled successfuly');
         return;
@@ -42,7 +55,7 @@ function toggleTask(taskId){
 
 function deleteTask(taskId){
     const newTasks = tasks.filter(function(task){
-        return task.id !== taskId
+        return task.id !== Number(taskId);
     });
 
     tasks = newTasks;
@@ -79,9 +92,9 @@ function handleInputKeypress(e){
         }
 
         const task = {
-          text,
+          title: text,
           id : Date.now().toString(),
-          done : false
+          completed : false
         }
 
         e.target.value = '';
@@ -105,6 +118,7 @@ function handleClickListener(e){
 }
 
 function initializeApp(){
+    fatchTodos();
     addTaskInput.addEventListener('keyup',handleInputKeypress);
     document.addEventListener('click',handleClickListener);
 }
